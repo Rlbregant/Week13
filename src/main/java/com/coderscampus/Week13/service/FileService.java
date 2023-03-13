@@ -18,8 +18,9 @@ public class FileService {
 	private List<Recipe> recipes;
 
 	@Autowired
-	public FileService() {
+	public FileService() throws IOException {
 		this.recipes = new ArrayList<>();
+		loadRecipes();
 	}
 
 	public List<Recipe> loadRecipes() throws IOException {
@@ -34,30 +35,35 @@ public class FileService {
 						"Vegetarian")
 				.withSkipHeaderRecord().withIgnoreSurroundingSpaces();
 
-		// Convert each CSV record into a Recipe object and add it to the list
-		CSVParser parser = new CSVParser(reader, csvFormat);
-		for (CSVRecord record : parser) {
-			Recipe recipe = new Recipe();
-			recipe.setCookingMinutes(Integer.parseInt(record.get("Cooking Minutes")));
-			recipe.setDairyFree(Boolean.parseBoolean(record.get("Dairy Free")));
-			recipe.setGlutenFree(Boolean.parseBoolean(record.get("Gluten Free")));
-			recipe.setInstructions(record.get("Instructions"));
-			recipe.setPreparationMinutes(Double.parseDouble(record.get("Preparation Minutes")));
-			recipe.setPricePerServing(Double.parseDouble(record.get("Price Per Serving")));
-			recipe.setReadyInMinutes(Integer.parseInt(record.get("Ready In Minutes")));
-			recipe.setServings(Integer.parseInt(record.get("Servings")));
-			recipe.setSpoonacularScore(Double.parseDouble(record.get("Spoonacular Score")));
-			recipe.setTitle(record.get("Title"));
-			recipe.setVegan(Boolean.parseBoolean(record.get("Vegan")));
-			recipe.setVegetarian(Boolean.parseBoolean(record.get("Vegetarian")));
-			recipes.add(recipe);
-		}
+	    try {
+	        // Convert each CSV record into a Recipe object and add it to the list
+	        CSVParser parser = new CSVParser(reader, csvFormat);
+	        for (CSVRecord record : parser) {
+	            Recipe recipe = new Recipe();
+	            recipe.setCookingMinutes(Integer.parseInt(record.get("Cooking Minutes")));
+	            recipe.setDairyFree(Boolean.parseBoolean(record.get("Dairy Free")));
+	            recipe.setGlutenFree(Boolean.parseBoolean(record.get("Gluten Free")));
+	            recipe.setInstructions(record.get("Instructions"));
+	            recipe.setPreparationMinutes(Double.parseDouble(record.get("Preparation Minutes")));
+	            recipe.setPricePerServing(Double.parseDouble(record.get("Price Per Serving")));
+	            recipe.setReadyInMinutes(Integer.parseInt(record.get("Ready In Minutes")));
+	            recipe.setServings(Integer.parseInt(record.get("Servings")));
+	            recipe.setSpoonacularScore(Double.parseDouble(record.get("Spoonacular Score")));
+	            recipe.setTitle(record.get("Title"));
+	            recipe.setVegan(Boolean.parseBoolean(record.get("Vegan")));
+	            recipe.setVegetarian(Boolean.parseBoolean(record.get("Vegetarian")));
+	            recipes.add(recipe);
+	        }
 
-		// Close the CSV parser and the reader
-		parser.close();
-		reader.close();
+	        // Close the CSV parser and the reader
+	        parser.close();
+	        reader.close();
+	    } catch (IOException e) {
+	        // Throw the caught exception
+	        throw e;
+	    }
 
-		return recipes;
+	    return recipes;
 	}
 
 	public List<Recipe> getRecipes() {
